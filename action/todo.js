@@ -7,12 +7,20 @@ const uuid = require('uuid');
 var todos = [];
 
 module.exports = (app) => {
-
+    let  todo = app.db.mongo.models.Todo;
     return {
+        // findTodo: ({},done) => {
+        //     done(null,todos);
+        // },
+        //
         findTodo: ({},done) => {
-            done(null,todos);
+           return todo.find({}).then(function(result){
+               return done(null,result);
+           }).catch(function (err){
+               return done(err);
+           })
         },
-        
+
         findTodoById : ({id}, done) => {
             done(null, _.find(todos, {id}));
         },
