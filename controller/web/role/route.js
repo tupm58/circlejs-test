@@ -1,33 +1,32 @@
 /**
- * Created by MinhTu on 2/23/2017.
+ * Created by MinhTu on 2/25/2017.
  */
-
 
 "use strict";
 
 module.exports = (application) => {
-    const todoHandler = require('./handler')(application);
+    const roleHandler = require('./handler')(application);
 
     return {
         "/": {
             get: {
-                handler: todoHandler.findTodo,
+                handler: roleHandler.findRole,
             }
         },
         "/:id": {
             get: {
-                handler: todoHandler.findTodoById,
+                handler: roleHandler.findRoleById,
             },
             put: {
-                handler: todoHandler.updateTodo,
+                handler: roleHandler.updateRole,
             },
             delete: {
-                handler: todoHandler.deleteTodo,
+                handler: roleHandler.deleteRole,
             }
         },
         "/create": {
             post: {
-                handler: todoHandler.createTodo,
+                handler: roleHandler.createRole,
             }
         },
         "/auth/test": {

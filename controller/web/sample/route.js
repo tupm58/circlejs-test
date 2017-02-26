@@ -45,7 +45,7 @@ module.exports = (application) => {
                     name: 'jwt',
                     permissions: ['item_manage'],
                     // options: {}
-                },
+                }
             }
         },
     }

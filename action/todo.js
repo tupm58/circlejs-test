@@ -27,11 +27,15 @@ module.exports = (app) => {
 
         createTodo: ({payload}, done) => {
             const  result = {
-                id: uuid.v4(),
                 ...payload
             };
-            todos.push(result);
-            return done(null,result);
+            var result1 = new todo(result);
+
+            return result1.save().then(function(result){
+                return done(null,result);
+            }).catch(function (err){
+                return done(err);
+            })
         },
         updateTodo: ({id,payload},done) => {
             const todo = _.find(todos, {id});
