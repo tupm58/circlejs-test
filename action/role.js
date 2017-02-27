@@ -20,11 +20,12 @@ module.exports = (app) => {
             } catch (err) {
                 return done(null, null);
             }
-            return role.findById(id).exec().then(function (result) {
-                return done(null, result);
-            }).catch(function (err) {
-                return done(err);
-            })
+            return role.findById(id).exec()
+                .then(function (result) {
+                    return done(null, result);
+                }).catch(function (err) {
+                    return done(err);
+                })
         },
 
         createRole: ({payload}, done) => {
@@ -32,25 +33,43 @@ module.exports = (app) => {
                 ...payload
             };
             var result1 = new role(result);
-
             return result1.save().then(function (result) {
                 return done(null, result);
             }).catch(function (err) {
                 return done(err);
             })
         },
-        updateTodo: ({id, payload}, done) => {
-            const todo = _.find(todos, {id});
-            if (!todo)
-                return done(null);
-            const index = _.indexOf(todos, todo);
-            const result = {...todo, ...payload};
-            todos.splice(index, 1, result);
+        updateRole: ({id, payload}, done) => {
+            try {
+                id = mongoose.Types.ObjectId(id);
+            }catch (err) {
+                return done(null,null);
+            }
+            role.findById(id,function(err,result){
+                if (err) return done(err);
 
-            return done(null, result);
+                result = _.extend(result,payload);
+                result.save()
+                    .then(function (result) {
+                        return done(null, result);
+                    }).catch(function (err) {
+                    return done(err);
+                })
+            });
         },
-        deleteTodo: ({id}, done) => {
-            done(null, _.remove(todos, (todo) => todo.id === id));
+        deleteRole: ({id}, done) => {
+            try {
+                id = mongoose.Types.ObjectId(id);
+            }catch (err) {
+                return done(null,null);
+            }
+            return role.remove({
+                _id : id
+            },function(err,result){
+                if (err)
+                    return (err);
+                return done(null,result);
+            })
         }
     }
 };

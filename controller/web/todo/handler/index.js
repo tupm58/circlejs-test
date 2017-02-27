@@ -36,7 +36,8 @@ module.exports = (app) => (
     createTodo: async(req, res) => {
         const result = await app.seneca.exec({
             role: 'todo', cmd: 'createTodo', payload: {
-                name: req.body.name
+                name: req.body.name,
+                isDone: "false"
             }
         });
         return res.jsonp({
@@ -49,7 +50,8 @@ module.exports = (app) => (
         const result = await app.seneca.exec({
             role: 'todo', cmd: 'updateTodo', id: req.params.id,
             payload: {
-                name: req.body.name
+                name: req.body.name,
+                isDone: req.body.isDone
             }
         });
         if (result)

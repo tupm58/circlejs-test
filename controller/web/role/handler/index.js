@@ -54,7 +54,7 @@ module.exports = (app) => (
         const result = await app.seneca.exec({
             role: 'role', cmd: 'updateRole', id: req.params.id,
             payload: {
-                name: req.body.name
+                title: req.body.title
             }
         });
         if (result)

@@ -2,17 +2,11 @@
  * Created by MinhTu on 2/23/2017.
  */
 const _ = require('lodash');
-const uuid = require('uuid');
-
-var todos = [];
+var mongoose = require('mongoose');
 
 module.exports = (app) => {
     let  todo = app.db.mongo.models.Todo;
     return {
-        // findTodo: ({},done) => {
-        //     done(null,todos);
-        // },
-        //
         findTodo: ({},done) => {
            return todo.find({}).then(function(result){
                return done(null,result);
@@ -22,7 +16,17 @@ module.exports = (app) => {
         },
 
         findTodoById : ({id}, done) => {
-            done(null, _.find(todos, {id}));
+            try {
+                id = mongoose.Types.ObjectId(id);
+            }catch (err) {
+                return done(null,null);
+            }
+            return todo.findById(id).exec()
+                .then(function(result){
+                    return done(null,result);
+                }).catch(function(err){
+                    return done(err);
+                })
         },
 
         createTodo: ({payload}, done) => {
@@ -30,7 +34,6 @@ module.exports = (app) => {
                 ...payload
             };
             var result1 = new todo(result);
-
             return result1.save().then(function(result){
                 return done(null,result);
             }).catch(function (err){
@@ -38,17 +41,37 @@ module.exports = (app) => {
             })
         },
         updateTodo: ({id,payload},done) => {
-            const todo = _.find(todos, {id});
-            if (!todo)
-                return done(null);
-            const index = _.indexOf(todos,todo);
-            const result = {...todo,...payload};
-            todos.splice(index,1, result);
-            
-            return done(null,result);
+            try {
+                id = mongoose.Types.ObjectId(id);
+            }catch (err) {
+                return done(null,null);
+            }
+            todo.findById(id,function(err,result){
+                if (err) return done(err);
+
+                result = _.extend(result,payload);
+                result.save()
+                    .then(function (result) {
+                        return done(null, result);
+                    }).catch(function (err) {
+                        return done(err);
+                    })
+            });
+
         },
         deleteTodo: ({id}, done) => {
-            done( null, _.remove(todos,(todo) => todo.id === id) );
+            try {
+                id = mongoose.Types.ObjectId(id);
+            }catch (err) {
+                return done(null,null);
+            }
+            return todo.remove({
+                _id : id
+            },function(err,result){
+                if (err) 
+                    return (err);
+                return done(null,result);
+            })
         }
     }
 };
